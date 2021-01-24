@@ -25,10 +25,13 @@ class GridsAndHexesTypeError(GridsAndHexesException):
     pass
 
 
-def grid(filename=None, format='png', cols=20, rows=80, width=1, height=1, unit='in',
-         resolution=72, background='white', minorStyle='solid', minorThickness=1, minorColor='black',
-         majorInterval=None, majorHorizontalInterval=None, majorVerticalInterval=None,
-         majorStyle=None, majorThickness=None, majorColor=None):
+def grid(filename=None, cols=20, rows=80, width=1, height=1, unit='in',
+         resolution=72, background='white', style='solid', thickness=1, color='black',
+         secondaryInterval=None, secondaryHorizontalInterval=None, secondaryVerticalInterval=None,
+         secondaryStyle=None, secondaryThickness=None, secondaryColor=None):
+    """TODO
+
+    """
 
     # Check the `filename` argument's type and value:
     if not isinstance(filename, str) and filename is not None:
@@ -36,22 +39,17 @@ def grid(filename=None, format='png', cols=20, rows=80, width=1, height=1, unit=
     if filename == '':
         raise GridsAndHexesValueError("filename arg cannot be a blank string")
 
-    # Check the `format` argument's type and value:
-    if not isinstance(format, str):
-        raise GridsAndHexesTypeError("format arg must be a str, not " + type(format).__qualname__)
-    format = format.lower()
-    if format not in ('png', 'pdf'):
-        raise GridsAndHexesValueError("format arg must be a string of either 'png' or 'pdf'")
 
     # Check the `cols`, `rows`, `width`, `height`, and `resolution` arguments' types and values:
-    if majorThickness is None:
-        majorThickness = minorThickness  # majorThickness "inherits" minorThickness
-    for var, varName in ((cols, 'cols'), (rows, 'rows'), (width, 'width'), (height, 'height'), (resolution, 'resolution'), (minorThickness, 'minorThickness'), (majorThickness, 'majorThickness')):
+    if secondaryThickness is None:
+        secondaryThickness = thickness  # secondaryThickness "inherits" thickness
+    for var, varName in ((cols, 'cols'), (rows, 'rows'), (width, 'width'), (height, 'height'), (resolution, 'resolution'), (thickness, 'thickness'), (secondaryThickness, 'secondaryThickness')):
         if not isinstance(var, int):
             raise GridsAndHexesTypeError(varName + " arg must be an int, not a " + type(var).__qualname__)
         if var < 1:
             raise GridsAndHexesValueError(varName + " arg must be a positive, nonzero integer")
 
+    # The `unit` argument must be 'in' or 'cm'.
     # Check the `unit` argument's type and value:
     if not isinstance(unit, str):
         raise GridsAndHexesTypeError("unit arg must be a str, not " + type(unit).__qualname__)
@@ -59,10 +57,10 @@ def grid(filename=None, format='png', cols=20, rows=80, width=1, height=1, unit=
     if unit not in ('in', 'cm'):
         raise GridsAndHexesValueError("unit arg must be either 'in' or 'cm'")
 
-    # Check the `background`, `minorColor`, and `majorColor` arguments' types and values:
-    if majorColor is None:
-        majorColor = minorColor  # majorColor "inherits" minorColor
-    for var, varName in ((background, 'background'), (minorColor, 'minorColor'), (majorColor, 'majorColor')):
+    # Check the `background`, `color`, and `secondaryColor` arguments' types and values:
+    if secondaryColor is None:
+        secondaryColor = color  # secondaryColor "inherits" color
+    for var, varName in ((background, 'background'), (color, 'color'), (secondaryColor, 'secondaryColor')):
         if not isinstance(var, str):
             raise GridsAndHexesTypeError(varName + " arg must be a str, not " + type(var).__qualname__)
         try:
@@ -70,30 +68,26 @@ def grid(filename=None, format='png', cols=20, rows=80, width=1, height=1, unit=
         except ValueError:
             raise GridsAndHexesValueError(varName + " arg is an unknown color")
 
-    # Check the `minorStyle`, `borderStyle`, and `interiorStyle` arguments' types and values:
-    if majorStyle is None:
-        majorStyle = minorStyle  # majorStyle "inherits" minorStyle
-    for var, varName in ((minorStyle, 'minorStyle'), (majorStyle, 'majorStyle')):
+    # Check the `style`, `borderStyle`, and `interiorStyle` arguments' types and values:
+    if secondaryStyle is None:
+        secondaryStyle = style  # secondaryStyle "inherits" style
+    for var, varName in ((style, 'style'), (secondaryStyle, 'secondaryStyle')):
         if not isinstance(var, str):
             raise GridsAndHexesTypeError(varName + " arg must be a str, not " + type(var).__qualname__)
 
-    minorStyle = minorStyle.lower()
-    majorStyle = majorStyle.lower()
+    style = style.lower()
+    secondaryStyle = secondaryStyle.lower()
 
-    for var, varName in ((minorStyle, 'minorStyle'), (majorStyle, 'majorStyle')):
+    for var, varName in ((style, 'style'), (secondaryStyle, 'secondaryStyle')):
         if var not in ('dotted', 'solid', 'double', 'dashed'):
             raise GridsAndHexesValueError(varName + " arg must be 'dotted', 'solid', 'double', or 'dashed'")
 
-    # Check the `majorInterval`, `majorHorizontalInterval`, and `majorVerticalInterval` arguments' types and values:
-    if majorInterval is not None:
-        majorHorizontalInterval = majorInterval
-        majorVerticalInterval = majorInterval
+    # Check the `secondaryInterval`, `secondaryHorizontalInterval`, and `secondaryVerticalInterval` arguments' types and values:
+    if secondaryInterval is not None:
+        secondaryHorizontalInterval = secondaryInterval
+        secondaryVerticalInterval = secondaryInterval
     # LEFT OFF
 
-
-    # Give the filename a default name if `filename` is `None`:
-    if filename is None:
-        filename = 'grid%sx%s.%s' % (cols, rows, format)
 
     boxWidthInPixels = width * resolution
     boxHeightInPixels = height * resolution
@@ -108,9 +102,9 @@ def grid(filename=None, format='png', cols=20, rows=80, width=1, height=1, unit=
     for x in range(0, totalImageWidth, boxWidthInPixels):
         for y in range(0, totalImageHeight, boxHeightInPixels):
             # Draw the left side of the box:
-            draw.rectangle((x, y, x + minorThickness - 1, y + (boxHeightInPixels) - 1), fill=minorColor)
+            draw.rectangle((x, y, x + thickness - 1, y + (boxHeightInPixels) - 1), fill=color)
             # Draw the top side of the box:
-            draw.rectangle((x, y, x + (boxWidthInPixels) - 1, y + minorThickness - 1), fill=minorColor)
+            draw.rectangle((x, y, x + (boxWidthInPixels) - 1, y + thickness - 1), fill=color)
 
     # Create the dpi metadata for the image:
     if unit == 'in':
@@ -118,4 +112,4 @@ def grid(filename=None, format='png', cols=20, rows=80, width=1, height=1, unit=
     elif unit == 'cm':
         dpi = (resolution * CM_PER_INCH, resolution * CM_PER_INCH)
 
-    im.save(filename, dpi=(resolution, resolution))
+    im.save(filename, dpi=(dpi, dpi))

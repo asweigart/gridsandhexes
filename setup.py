@@ -17,7 +17,7 @@ with io.open("README.md", encoding="utf-8") as fileObj:
     long_description = fileObj.read()
 
 setup(
-    name="Grids and Hexes",
+    name="GridsAndHexes",
     version=version,
     url="https://github.com/asweigart/gridsandhexes",
     author="Al Sweigart",
@@ -29,7 +29,7 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     test_suite="tests",
-    install_requires=[],
+    install_requires=['pillow'], # TODO - set up ranges of versions
     keywords="",
     classifiers=[
         "License :: OSI Approved :: MIT License",
@@ -38,5 +38,8 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
     ],
 )
+
